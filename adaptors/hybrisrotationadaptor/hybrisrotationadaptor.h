@@ -25,7 +25,7 @@
 #include <QString>
 #include <QStringList>
 #include "deviceadaptorringbuffer.h"
-#include "datatypes/rotationdata.h"
+#include "datatypes/orientationdata.h"
 
 /**
  * @brief Adaptor for hybris compass.
