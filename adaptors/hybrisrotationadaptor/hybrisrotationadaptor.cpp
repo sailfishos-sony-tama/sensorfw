@@ -45,7 +45,7 @@
  **/
 
 HybrisRotationAdaptor::HybrisRotationAdaptor(const QString& id) :
-    HybrisAdaptor(id,SENSOR_TYPE_ROTATION)
+    HybrisAdaptor(id,SENSOR_TYPE_ROTATION_VECTOR)
 {
     buffer = new DeviceAdaptorRingBuffer<CompassData>(1);
     setAdaptedSensor("hybrisrotation", "Internal rotation coordinates", buffer);
@@ -92,7 +92,7 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     // d->degrees_ = data.u.vec3.x; //azimuth
     // d->level_ = data.u.vec3.status;
 #else
-    float rotationVector[] = data.data;
+    float *rotationVector = data.data;
 #endif
     //
     float q0 = rotationVector[3];
@@ -112,7 +112,7 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
 
     float R1 = q1_q2 - q3_q0;
     float R4 = 1 - sq_q1 - sq_q3;
-    azimuth = qAtan2(R1, R4) * RADIANS_TO_DEGREES;
+    float azimuth = qAtan2(R1, R4) * RADIANS_TO_DEGREES;
     d->degrees_ = (int)(azimuth + 360) % 360;
     d->rawDegrees_ = d->degrees_;
     d->level_ = data.rotation.status;
