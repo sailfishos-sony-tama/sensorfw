@@ -92,7 +92,7 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     // d->degrees_ = data.u.vec3.x; //azimuth
     // d->level_ = data.u.vec3.status;
 #else
-    float *rotationVector = data.data;
+    const float *rotationVector = data.data;
 #endif
     //
     float q0 = rotationVector[3];
@@ -115,7 +115,7 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     float azimuth = qAtan2(R1, R4) * RADIANS_TO_DEGREES;
     d->degrees_ = (int)(azimuth + 360) % 360;
     d->rawDegrees_ = d->degrees_;
-    d->level_ = data.rotation.status;
+    d->level_ = 1; // arbitrary number
 
     buffer->commit();
     buffer->wakeUpReaders();
