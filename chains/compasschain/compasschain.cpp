@@ -48,13 +48,7 @@ CompassChain::CompassChain(const QString& id) :
         if (orientAdaptor && orientAdaptor->isValid()) {
             hasOrientationAdaptor = true;
         }
-
-        qDebug() << Q_FUNC_INFO << "AAAAAAAAAAAAA compassChain orientAdaptor" << (bool)orientAdaptor;
-        if (orientAdaptor)
-          qDebug() << Q_FUNC_INFO  << "AAAAAAAAAAAAA compassChain orientAdaptor 2" << orientAdaptor->isValid();
     }
-    qDebug() << Q_FUNC_INFO << "AAAAAAAAAAAAA " << sm.getAdaptorTypes();
-    qDebug() << Q_FUNC_INFO << "AAAAAAAAAAAAA compassChain constructor";
 
     if (hasOrientationAdaptor) {
         setValid(orientAdaptor->isValid());
