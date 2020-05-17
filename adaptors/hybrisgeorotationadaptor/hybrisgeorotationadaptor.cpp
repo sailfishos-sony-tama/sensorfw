@@ -18,7 +18,7 @@
 **
 ****************************************************************************/
 
-#include "hybrisrotationadaptor.h"
+#include "hybrisgeorotationadaptor.h"
 #include "logging.h"
 #include "datatypes/utils.h"
 #include "config.h"
@@ -32,26 +32,16 @@
  * the Z axis (0<=azimuth<360).
  * 0=North, 90=East, 180=South, 270=West
  *
- * pitch: Rotation around X axis (-180<=pitch<=180), with positive values when
- * the z-axis moves toward the y-axis.
- *
- * roll: Rotation around Y axis (-90<=roll<=90), with positive values when
- * the x-axis moves towards the z-axis.
- *
  **/
 
-/*
- * not to be confused with rotation
- **/
-
-HybrisRotationAdaptor::HybrisRotationAdaptor(const QString& id) :
-    HybrisAdaptor(id,SENSOR_TYPE_ROTATION_VECTOR)
+HybrisGeoRotationAdaptor::HybrisGeoRotationAdaptor(const QString& id) :
+    HybrisAdaptor(id,SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR)
 {
     buffer = new DeviceAdaptorRingBuffer<CompassData>(1);
-    setAdaptedSensor("hybrisrotation", "Internal rotation coordinates", buffer);
+    setAdaptedSensor("hybrisgeorotation", "Internal rotation coordinates using geo rotation vector", buffer);
 
-    setDescription("Hybris rotation");
-    powerStatePath = SensorFrameworkConfig::configuration()->value("rotation/powerstate_path").toByteArray();
+    setDescription("Hybris georotation");
+    powerStatePath = SensorFrameworkConfig::configuration()->value("georotation/powerstate_path").toByteArray();
     if (!powerStatePath.isEmpty() && !QFile::exists(powerStatePath))
     {
     	sensordLogW() << "Path does not exists: " << powerStatePath;
@@ -60,30 +50,30 @@ HybrisRotationAdaptor::HybrisRotationAdaptor(const QString& id) :
 //    setDefaultInterval(50);
 }
 
-HybrisRotationAdaptor::~HybrisRotationAdaptor()
+HybrisGeoRotationAdaptor::~HybrisGeoRotationAdaptor()
 {
     delete buffer;
 }
 
-bool HybrisRotationAdaptor::startSensor()
+bool HybrisGeoRotationAdaptor::startSensor()
 {
     if (!(HybrisAdaptor::startSensor()))
         return false;
     if (isRunning() && !powerStatePath.isEmpty())
         writeToFile(powerStatePath, "1");
-    sensordLogD() << "Hybris RotationAdaptor start\n";
+    sensordLogD() << "Hybris GeoRotationAdaptor start\n";
     return true;
 }
 
-void HybrisRotationAdaptor::stopSensor()
+void HybrisGeoRotationAdaptor::stopSensor()
 {
     HybrisAdaptor::stopSensor();
     if (!isRunning() && !powerStatePath.isEmpty())
         writeToFile(powerStatePath, "0");
-    sensordLogD() << "Hybris RotationAdaptor stop\n";
+    sensordLogD() << "Hybris GeoRotationAdaptor stop\n";
 }
 
-void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
+void HybrisGeoRotationAdaptor::processSample(const sensors_event_t& data)
 {
     CompassData *d = buffer->nextSlot();
     d->timestamp_ = quint64(data.timestamp * .001);
@@ -125,6 +115,6 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     buffer->wakeUpReaders();
 }
 
-void HybrisRotationAdaptor::init()
+void HybrisGeoRotationAdaptor::init()
 {
 }

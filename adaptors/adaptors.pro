@@ -11,6 +11,7 @@ contains(CONFIG,hybris) {
     SUBDIRS += hybrisproximityadaptor
     SUBDIRS += hybrisorientationadaptor
     SUBDIRS += hybrisrotationadaptor
+    SUBDIRS += hybrisgeorotationadaptor
     SUBDIRS += hybrisstepcounteradaptor
 
     } else {
@@ -57,6 +58,7 @@ config_hybris {
     SUBDIRS += hybrisproximityadaptor
     SUBDIRS += hybrisorientationadaptor
     SUBDIRS += hybrisrotationadaptor
+    SUBDIRS += hybrisgeorotationadaptor
     SUBDIRS += hybrisstepcounteradaptor
  }
 }
