@@ -3,6 +3,9 @@
 ** Copyright (C) 2013 Jolla Ltd
 ** Contact: lorn.potter@jollamobile.com
 **
+** Copyright (C) 2020 Rinigus
+** Contact: rinigus.git@gmail.com
+**
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 **
@@ -24,6 +27,7 @@
 #include "config.h"
 
 #include <QtCore/qmath.h>
+#include <QtGlobal>
 
 #define RADIANS_TO_DEGREES 57.2957795
 
@@ -79,12 +83,13 @@ void HybrisGeoRotationAdaptor::processSample(const sensors_event_t& data)
     d->timestamp_ = quint64(data.timestamp * .001);
 #ifdef USE_BINDER
 #error "NOT IMPLEMENTED"
-    // d->degrees_ = data.u.vec3.x; //azimuth
-    // d->level_ = data.u.vec3.status;
+    const float *rotationVector = data.u.data; // ???
 #else
     const float *rotationVector = data.data;
 #endif
-    //
+    // Calculations are based on Android methods
+    // getRotationMatrixFromVector and getOrientation
+    // of SensorManager.java
     float q0 = rotationVector[3];
     float q1 = rotationVector[0];
     float q2 = rotationVector[1];
@@ -108,8 +113,11 @@ void HybrisGeoRotationAdaptor::processSample(const sensors_event_t& data)
     d->rawDegrees_ = d->degrees_;
 
     // level_ is set to 3 (pass csd) when accuracy is higher than 10 degrees
-    if (accuracy < 0) d->level_ = 0;
-    else d->level_ = (accuracy > 0) ? (int)(3 * 0.174533/accuracy) : 10;
+    const int maxLevel = 3;
+    if (accuracy < 0) d->level_ = 0;    
+    else d->level_ = (accuracy > 1e-5) ? (int)(qMin(qFloor(maxLevel * 0.174533/accuracy), maxLevel)) : maxLevel;
+
+    sensordLogD() << "Hybris RotationAdaptor accuracy: " << accuracy;
 
     buffer->commit();
     buffer->wakeUpReaders();
