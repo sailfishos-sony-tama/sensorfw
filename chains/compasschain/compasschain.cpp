@@ -49,11 +49,11 @@ CompassChain::CompassChain(const QString& id) :
             hasOrientationAdaptor = true;
         }
 
-        sensordLogD() << "compassChain orientAdaptor" << (bool)orientAdaptor;
+        qDebug() << Q_FUNC_INFO << "AAAAAAAAAAAAA compassChain orientAdaptor" << (bool)orientAdaptor;
         if (orientAdaptor)
-          sensordLogD() << "compassChain orientAdaptor 2" << orientAdaptor->isValid();
+          qDebug() << Q_FUNC_INFO  << "AAAAAAAAAAAAA compassChain orientAdaptor 2" << orientAdaptor->isValid();
     }
-    sensordLogD() << "compassChain constructor";
+    qDebug() << Q_FUNC_INFO << "AAAAAAAAAAAAA compassChain constructor";
 
     if (hasOrientationAdaptor) {
         setValid(orientAdaptor->isValid());
