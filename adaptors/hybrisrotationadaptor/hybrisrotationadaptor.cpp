@@ -99,6 +99,7 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     float q1 = rotationVector[0];
     float q2 = rotationVector[1];
     float q3 = rotationVector[2];
+    float accuracy = rotationVector[4];
     
     float sq_q1 = 2 * q1 * q1;
     //float sq_q2 = 2 * q2 * q2;
@@ -115,7 +116,10 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     float azimuth = qAtan2(R1, R4) * RADIANS_TO_DEGREES;
     d->degrees_ = (int)(azimuth + 360) % 360;
     d->rawDegrees_ = d->degrees_;
-    d->level_ = 1; // arbitrary number
+
+    // level_ is set to 3 (pass csd) when accuracy is higher than 10 degrees
+    if (accuracy < 0) d->level_ = 0;
+    else d->level_ = (accuracy > 0) ? (int)(3 * 0.174533/accuracy) : 10;
 
     buffer->commit();
     buffer->wakeUpReaders();
