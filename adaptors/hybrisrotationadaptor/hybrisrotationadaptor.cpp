@@ -117,8 +117,6 @@ void HybrisRotationAdaptor::processSample(const sensors_event_t& data)
     if (accuracy < 0) d->level_ = 0;    
     else d->level_ = (accuracy > 1e-5) ? (int)(qMin(qFloor(maxLevel * 0.174533/accuracy), maxLevel)) : maxLevel;
 
-    sensordLogD() << "Hybris RotationAdaptor accuracy: " << accuracy;
-
     buffer->commit();
     buffer->wakeUpReaders();
 }
