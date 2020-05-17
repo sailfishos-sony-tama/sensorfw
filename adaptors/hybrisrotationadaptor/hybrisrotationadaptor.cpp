@@ -45,7 +45,7 @@
  **/
 
 HybrisRotationAdaptor::HybrisRotationAdaptor(const QString& id) :
-    HybrisAdaptor(id,GEOMAGNETIC_ROTATION_VECTOR/*SENSOR_TYPE_ROTATION_VECTOR*/)
+    HybrisAdaptor(id,SENSOR_GEOMAGNETIC_ROTATION_VECTOR/*SENSOR_TYPE_ROTATION_VECTOR*/)
 {
     buffer = new DeviceAdaptorRingBuffer<CompassData>(1);
     setAdaptedSensor("hybrisrotation", "Internal rotation coordinates", buffer);
