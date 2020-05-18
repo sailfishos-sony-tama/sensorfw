@@ -29,7 +29,7 @@
 HybrisPickupAdaptor::HybrisPickupAdaptor(const QString& id) :
     HybrisAdaptor(id,SENSOR_TYPE_PICK_UP_GESTURE)
 {
-    buffer = new DeviceAdaptorRingBuffer<CompassData>(1);
+    buffer = new DeviceAdaptorRingBuffer<TapData>(1);
     setAdaptedSensor("hybrispickup", "Internal pickup triggers", buffer);
 
     setDescription("Hybris pickup");
@@ -77,7 +77,7 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
     TapData *d = buffer->nextSlot();
     d->timestamp_ = quint64(data.timestamp * .001);
     d->type_ = TapData::SingleTap;
-    tapValue.direction_ = TapData::Z;
+    d->direction_ = TapData::Z;
     
     buffer->commit();
     buffer->wakeUpReaders();
