@@ -71,7 +71,7 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
 #else
     const int value = data.u64.data[0];
 #endif
-    sensordLogD() << "Pickup value: " << value;
+    sensordLogD() << "Pickup value: " << value << " " << data.data[0];
     if (value != 1) return;
     
     TapData *d = buffer->nextSlot();
