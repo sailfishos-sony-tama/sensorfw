@@ -69,12 +69,15 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
 {
     // check if it is an expected event
 #ifdef USE_BINDER
-    const float value = data.u.data[0];
+    const float value = data.data[0];
 #else
-    const float value = data.u64.data[0];
+    const float value = data.u.data[0];
 #endif
     sensordLogD() << "Pickup value: " << value;
-    if (qFabs(value - 1) < 1e-6) return;
+    if (qFabs(value - 1) > 1e-6) {
+        sensordLogW() << "Unexpected pickup value: " << value;
+        return;
+    }
     
     TapData *d = buffer->nextSlot();
     d->timestamp_ = quint64(data.timestamp * .001);
