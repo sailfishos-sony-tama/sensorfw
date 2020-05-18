@@ -26,6 +26,8 @@
 #include "datatypes/utils.h"
 #include "config.h"
 
+#include <QtMath>
+
 HybrisPickupAdaptor::HybrisPickupAdaptor(const QString& id) :
     HybrisAdaptor(id,SENSOR_TYPE_PICK_UP_GESTURE)
 {
@@ -67,12 +69,12 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
 {
     // check if it is an expected event
 #ifdef USE_BINDER
-    const int value = data.u.stepCounter; // any uint64_t would do
+    const float value = data.u.data[0];
 #else
-    const int value = data.u64.data[0];
+    const float value = data.u64.data[0];
 #endif
-    sensordLogD() << "Pickup value: " << value << " " << data.data[0];
-    if (value != 1) return;
+    sensordLogD() << "Pickup value: " << value;
+    if (qFabs(value - 1) < 1e-6) return;
     
     TapData *d = buffer->nextSlot();
     d->timestamp_ = quint64(data.timestamp * .001);
