@@ -27,7 +27,6 @@
 #include "config.h"
 
 #include <QtMath>
-#include <QTimer>
 
 HybrisPickupAdaptor::HybrisPickupAdaptor(const QString& id) :
     HybrisAdaptor(id,SENSOR_TYPE_PICK_UP_GESTURE)
@@ -88,14 +87,12 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
     buffer->commit();
     buffer->wakeUpReaders();
 
-    // restart single-shot sensor after 1 second
-    QTimer::singleShot(1000, this, &HybrisPickupAdaptor::restart);
+    restart();
 }
 
 void HybrisPickupAdaptor::restart()
 {
     if (isRunning()) {
-        // restart sensor as it's one shot
         stopSensor();
         startSensor();
     }
