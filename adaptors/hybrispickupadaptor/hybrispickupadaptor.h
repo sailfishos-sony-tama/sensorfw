@@ -49,6 +49,7 @@ public:
 protected:
     void processSample(const sensors_event_t& data);
     void init();
+    void restart();  
 
 private:
     DeviceAdaptorRingBuffer<TapData>* buffer;
