@@ -89,7 +89,7 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
     buffer->wakeUpReaders();
 
     // restart single-shot sensor after 1 second
-    QTimer::singleShot(1000, this, HybrisPickupAdaptor::restart);
+    QTimer::singleShot(1000, this, &HybrisPickupAdaptor::restart);
 }
 
 void HybrisPickupAdaptor::restart()
