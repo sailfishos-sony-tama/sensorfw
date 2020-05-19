@@ -87,7 +87,7 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
     buffer->commit();
     buffer->wakeUpReaders();
 
-    restart();
+    //restart();
 }
 
 void HybrisPickupAdaptor::restart()
