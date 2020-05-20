@@ -1070,7 +1070,7 @@ void HybrisManager::processEvents(const sensors_event_t *buffer, int numberOfEve
         }
 #endif
 
-        if (data.type == SENSOR_TYPE_PROXIMITY) {
+        if (data.type == SENSOR_TYPE_PROXIMITY || data.type == SENSOR_TYPE_PICK_UP_GESTURE) {
             blockSuspend = true;
         }
         // FIXME: is this thread safe?
