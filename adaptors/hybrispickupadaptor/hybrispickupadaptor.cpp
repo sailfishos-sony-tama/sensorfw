@@ -73,7 +73,7 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
 #else
     const float value = data.data[0];
 #endif
-    sensordLogD() << "Pickup value: " << value;
+    sensordLogW() << "Pickup value: " << value;
     if (qFabs(value - 1) > 1e-6) {
         sensordLogW() << "Unexpected pickup value: " << value;
         return;
@@ -86,8 +86,6 @@ void HybrisPickupAdaptor::processSample(const sensors_event_t& data)
     
     buffer->commit();
     buffer->wakeUpReaders();
-
-    //restart();
 }
 
 void HybrisPickupAdaptor::restart()
