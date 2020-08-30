@@ -41,29 +41,28 @@
 HybrisGeoRotationAdaptor::HybrisGeoRotationAdaptor(const QString& id) :
     HybrisAdaptor(id,SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR)
 {
-    buffer = new DeviceAdaptorRingBuffer<CompassData>(1);
-    setAdaptedSensor("hybrisgeorotation", "Internal rotation coordinates using geo rotation vector", buffer);
+    m_buffer = new DeviceAdaptorRingBuffer<CompassData>(1);
+    setAdaptedSensor("hybrisgeorotation", "Internal rotation coordinates using geo rotation vector", m_buffer);
 
     setDescription("Hybris georotation");
-    powerStatePath = SensorFrameworkConfig::configuration()->value("georotation/powerstate_path").toByteArray();
-    if (!powerStatePath.isEmpty() && !QFile::exists(powerStatePath)) {
-        sensordLogW() << "Path does not exists: " << powerStatePath;
-        powerStatePath.clear();
+    m_powerStatePath = SensorFrameworkConfig::configuration()->value("georotation/powerstate_path").toByteArray();
+    if (!m_powerStatePath.isEmpty() && !QFile::exists(m_powerStatePath)) {
+        sensordLogW() << "Path does not exists: " << m_powerStatePath;
+        m_powerStatePath.clear();
     }
-//    setDefaultInterval(50);
 }
 
 HybrisGeoRotationAdaptor::~HybrisGeoRotationAdaptor()
 {
-    delete buffer;
+    delete m_buffer;
 }
 
 bool HybrisGeoRotationAdaptor::startSensor()
 {
     if (!(HybrisAdaptor::startSensor()))
         return false;
-    if (isRunning() && !powerStatePath.isEmpty())
-        writeToFile(powerStatePath, "1");
+    if (isRunning() && !m_powerStatePath.isEmpty())
+        writeToFile(m_powerStatePath, "1");
     sensordLogD() << "Hybris GeoRotationAdaptor start\n";
     return true;
 }
@@ -71,14 +70,14 @@ bool HybrisGeoRotationAdaptor::startSensor()
 void HybrisGeoRotationAdaptor::stopSensor()
 {
     HybrisAdaptor::stopSensor();
-    if (!isRunning() && !powerStatePath.isEmpty())
-        writeToFile(powerStatePath, "0");
-    sensordLogD() << "Hybris GeoRotationAdaptor stop\n";
+    if (!isRunning() && !m_powerStatePath.isEmpty())
+        writeToFile(m_powerStatePath, "0");
+    sensordLogD() << "Hybris GeoRotationAdaptor stop";
 }
 
 void HybrisGeoRotationAdaptor::processSample(const sensors_event_t& data)
 {
-    CompassData *d = buffer->nextSlot();
+    CompassData *d = m_buffer->nextSlot();
     d->timestamp_ = quint64(data.timestamp * .001);
 #ifdef USE_BINDER
     const float *rotationVector = data.u.data;
@@ -108,10 +107,12 @@ void HybrisGeoRotationAdaptor::processSample(const sensors_event_t& data)
     // level_ is set to 3 (pass csd) when accuracy is higher than 10 degrees
     const int maxLevel = 3;
     if (accuracy < 0) d->level_ = 0;
-    else d->level_ = (accuracy > 1e-5) ? (int)(qMin(qFloor(maxLevel * 0.174533/accuracy), maxLevel)) : maxLevel;
+    else d->level_ = (accuracy > 1e-5) ?
+           (int)(qMin(qFloor(maxLevel * 0.174533/accuracy), maxLevel)) :
+           maxLevel;
 
-    buffer->commit();
-    buffer->wakeUpReaders();
+    m_buffer->commit();
+    m_buffer->wakeUpReaders();
 }
 
 void HybrisGeoRotationAdaptor::init()

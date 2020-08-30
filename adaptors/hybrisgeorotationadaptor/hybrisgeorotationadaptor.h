@@ -53,9 +53,8 @@ protected:
     void init();
 
 private:
-    DeviceAdaptorRingBuffer<CompassData>* buffer;
-    int sensorType;
-    QByteArray powerStatePath;
+    DeviceAdaptorRingBuffer<CompassData>* m_buffer;
+    QByteArray m_powerStatePath;
 
 };
 #endif
